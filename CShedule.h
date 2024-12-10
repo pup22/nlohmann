@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include "json.hpp"
+#include "nlohmann/json.hpp"
 
 class CShedule : public nlohmann::json
 {
@@ -25,21 +25,23 @@ public:
 	}
 
 	void sort() {
-		auto fncomp_j{ [](nlohmann::json lhs, nlohmann::json rhs) ->bool { return lhs[0] < rhs[0]; } };
+		auto fncomp_j{ [](nlohmann::json lhs, nlohmann::json rhs) ->bool { return lhs[0] < rhs[0]; } }; // lambda
 		std::sort(this->begin(), this->end(), fncomp_j);
 	}
 
 	void unique() {
-		auto funique_j{ [](nlohmann::json lhs, nlohmann::json rhs) ->bool { return lhs[0] == rhs[0]; } };
+		auto funique_j{ [](nlohmann::json lhs, nlohmann::json rhs) ->bool { return lhs[0] == rhs[0]; } }; // lambda
 		erase(std::unique(this->begin(), this->end(), funique_j), this->end());
 	}
 
 	uint32_t firstIdNumeric() {
+		if (begin() == end()) return 0xFFFFFFFF;
 		nlohmann::json j = *begin();
 		return j[0];
 	}
 
 	std::string firstIdString() {
+		if (begin() == end()) return ""; // error
 		nlohmann::json j = *begin();
 		std::string str = std::to_string((uint32_t)j[0]);
 		return str;
