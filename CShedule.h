@@ -7,9 +7,13 @@
 class CShedule : public nlohmann::json
 {
 public:
-	// std::tuple
 	nlohmann::json::iterator findById(const char* c_id) {
 		uint32_t id = atoi(c_id);
+		auto findIfId{ [id](auto entry)->bool { return entry[0] == id; } };
+		return std::find_if(this->begin(), this->end(), findIfId);
+	}
+
+	nlohmann::json::iterator findById(uint32_t id) {
 		auto findIfId{ [id](auto entry)->bool { return entry[0] == id; } };
 		return std::find_if(this->begin(), this->end(), findIfId);
 	}
@@ -58,6 +62,19 @@ public:
 		if (findById(c_id) != end())
 			erase(findById(c_id));
 		else return false;
+		return true;
+	}
+
+	bool eraseById(uint32_t id) {
+		if (findById(id) != end())
+			erase(findById(id));
+		else return false;
+		return true;
+	}
+
+	bool eraseByIdLess(uint32_t id) {
+		auto findIfLess{ [id](auto entry)->bool { return entry[0] < id; } };
+		erase(std::remove_if(this->begin(), this->end(), findIfLess), this->end());
 		return true;
 	}
 };
